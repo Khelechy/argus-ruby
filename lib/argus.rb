@@ -1,5 +1,6 @@
 
 require 'socket'
+require_relative 'Helpers/helpers'
 
 class Argus 
 
@@ -20,8 +21,15 @@ class Argus
 
     loop do
       data = @socket.readpartial(1024)
+
       if !data.nil? && !data.empty?
-        puts "Received: #{data}"
+
+        if Helpers.is_json_string(data)
+          puts data
+        else
+          puts "Received: #{data}"
+        end
+
       end
     end
 
@@ -34,6 +42,8 @@ class Argus
     puts "Socket closed"
     @socket.close
   end
+
+  private
 
   def send_auth_data()
     connectionString = "<ArgusAuth>#{@username}:#{@password}</ArgusAuth>"
