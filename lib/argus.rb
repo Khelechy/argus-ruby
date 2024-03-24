@@ -1,6 +1,10 @@
 
 require 'socket'
-require_relative 'Helpers/helpers'
+require 'json'
+require 'ostruct'
+
+require_relative 'helpers/helpers'
+require_relative 'handlers/eventbus'
 
 class Argus 
 
@@ -11,6 +15,8 @@ class Argus
     @port = port == 0 ? 1337 : port
 
     @socket = nil
+
+    @event_bus = EventBus.new
   end
 
   def connect
@@ -25,7 +31,7 @@ class Argus
       if !data.nil? && !data.empty?
 
         if Helpers.is_json_string(data)
-          puts data
+          publish_argus_data(data)
         else
           puts "Received: #{data}"
         end
@@ -39,17 +45,24 @@ class Argus
   rescue StandardError => e
     puts "Error receiving data: #{e.message}"
 
-    puts "Socket closed"
-    @socket.close
+  puts "Socket closed"
+  @socket.close
+  end
+
+  def subscribe(subscriber, method_name)
+    @event_bus.subscribe(subscriber, method_name)
   end
 
   private
+
+  def publish_argus_data(data)
+    argus_event = JSON.parse(data, object_class: OpenStruct)
+    @event_bus.publish(argus_event)
+  end
+
 
   def send_auth_data()
     connectionString = "<ArgusAuth>#{@username}:#{@password}</ArgusAuth>"
     @socket.puts(connectionString)
   end
 end
-
-argus = Argus.new("testuser", "testpassword")
-argus.connect

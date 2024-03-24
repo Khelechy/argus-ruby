@@ -1,0 +1,5 @@
+--readme README.md
+--title 'Argus Ruby Documentation'
+--charset utf-8
+--markup markdown
+'lib/**/*.rb' - 'README.md' 'LICENSE'
