@@ -33,7 +33,7 @@ Finally use argus like so,
 ```ruby
     subscriber = Testsub.new
 
-    argus = Argus.new("testuser", "testpassword") // Optionally you can pass the host and port, and auth credentials inclusive.
+    argus = Argus.new("testuser", "testpassword") # Optionally you can pass the host and port, and auth credentials inclusive.
 
     argus.subscribe(subscriber, :on_event)
     argus.connect
